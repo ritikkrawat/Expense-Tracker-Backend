@@ -57,16 +57,11 @@ exports.downloadExpenseExcel = async (req, res) => {
   try {
     const expense = await Expense.find({ userId }).sort({ date: -1 });
 
-    const data = expense.map((item) => {
-        const dateObj = new Date(item.date);
-        const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
-
-        return {
-            Source: item.source,
-            Amount: item.amount,
-            Date: formattedDate,
-        };
-    });;
+    const data = expense.map((item) => ({
+      Category: item.category,
+      Amount: item.amount,
+      Date: item.date.toISOString().split("T")[0], // Format date
+    }));
 
     const wb = xlsx.utils.book_new();
     const ws = xlsx.utils.json_to_sheet(data);

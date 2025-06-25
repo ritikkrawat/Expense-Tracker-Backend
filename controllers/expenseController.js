@@ -57,23 +57,26 @@ exports.downloadExpenseExcel = async (req, res) => {
   try {
     const expense = await Expense.find({ userId }).sort({ date: -1 });
 
-    const data = expense.map((item) => ({
-      Category: item.category,
-      Amount: item.amount,
-      Date: item.date.toISOString().split("T")[0], // Format date
-    }));
+    const data = expense.map((item) => {
+      const dateObj = new Date(item.date);
+      const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
+
+      return {
+        Category: item.category,
+        Amount: item.amount,
+        Date: formattedDate,
+      };
+    });
 
     const wb = xlsx.utils.book_new();
     const ws = xlsx.utils.json_to_sheet(data);
     xlsx.utils.book_append_sheet(wb, ws, "Expense");
 
-    // Generate buffer instead of saving to disk
     const excelBuffer = xlsx.write(wb, {
       type: "buffer",
       bookType: "xlsx",
     });
 
-    // Set response headers for download
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=expense_details.xlsx"
@@ -83,10 +86,10 @@ exports.downloadExpenseExcel = async (req, res) => {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
 
-    res.send(excelBuffer); // Send file as buffer
+    res.send(excelBuffer);
   } catch (error) {
     console.error("Excel download error:", error.message);
     res.status(500).json({ message: "Server Error" });
   }
 };
-;
+

@@ -23,4 +23,8 @@ router.post('/upload-image', upload.single('image'), (req, res) => {
     res.status(200).json({imageUrl})
 });
 
+router.get('/test', (req, res) => {
+    res.status(200).json({ message: 'Auth route is working!' });
+});
+
 module.exports = router;

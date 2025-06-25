@@ -7,10 +7,12 @@ const authRoutes = require('./routes/authRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const favicon = require('serve-favicon');
 
 const app = express();
 
-// Middleware to handle CORS
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.use(
     cors({
         origin: process.env.CLIENT_URL || '*',
@@ -29,7 +31,6 @@ app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 
 
-// Server uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 const PORT = process.env.PORT || 5000;

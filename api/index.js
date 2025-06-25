@@ -29,7 +29,7 @@ app.use(express.json());
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('🚀 Expense Tracker Backend is running!');
+  res.send('Backend is running!');
 });
 
 app.use('/api/v1/auth', authRoutes);

@@ -15,24 +15,31 @@ const dashboardRoutes = require('../routes/dashboardRoutes');
 
 const app = express();
 
-app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
+// Connect to MongoDB
+connectDB();
 
+// Middleware
+app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 app.use(cors({
   origin: process.env.CLIENT_URL || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-
 app.use(express.json());
 
-connectDB();
+// Routes
+app.get('/', (req, res) => {
+  res.send('🚀 Expense Tracker Backend is running!');
+});
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/income', incomeRoutes);
 app.use('/api/v1/expense', expenseRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+
+// Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Export as serverless function
+// Serverless handler
 module.exports = app;
 module.exports.handler = serverless(app);

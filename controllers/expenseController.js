@@ -93,3 +93,37 @@ exports.downloadExpenseExcel = async (req, res) => {
   }
 };
 
+// Update Expense Source
+exports.updateExpense = async (req, res) => {
+  const { id } = req.params;
+  const { icon, category, amount, date } = req.body;
+  const userId = req.user.id;
+
+  try {
+    // Validation
+    if (!category || !amount || !date) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const updatedExpense = await Expense.findOneAndUpdate(
+      { _id: id, userId }, // ensure user can only update their own expense
+      {
+        icon,
+        category,
+        amount,
+        date: new Date(date)
+      },
+      { new: true } // return updated document
+    );
+
+    if (!updatedExpense) {
+      return res.status(404).json({ message: "Expense not found or not authorized" });
+    }
+
+    res.status(200).json(updatedExpense);
+  } catch (error) {
+    console.error("Update error:", error.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+

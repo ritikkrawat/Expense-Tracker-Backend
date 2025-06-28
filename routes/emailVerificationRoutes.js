@@ -23,7 +23,7 @@ router.post('/send', async (req, res) => {
 
   try {
     // Remove existing OTPs for this email
-    await OtpVerification.deleteMany({ email: normalizedEmail });
+    await OtpVerification.deleteMany({ email });
 
     // Save new OTP to DB
     const otpEntry = new OtpVerification({
